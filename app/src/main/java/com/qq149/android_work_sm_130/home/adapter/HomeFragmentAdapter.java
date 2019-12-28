@@ -7,6 +7,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -57,6 +59,8 @@ public class HomeFragmentAdapter  extends RecyclerView.Adapter {
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int viewType) {
         if(viewType == BANNER){
             return new BannerViewHolder(mContext,mLayoutInflater.inflate(R.layout.banner_viewpager,null));
+        }else if(viewType==CHANNEL){
+            return new ChannelViewHolder(mContext,mLayoutInflater.inflate(R.layout.channel_item,null));
         }
         return null;
     }
@@ -112,6 +116,9 @@ public class HomeFragmentAdapter  extends RecyclerView.Adapter {
         if(getItemViewType(position)==BANNER){
             BannerViewHolder bannerViewHolder = (BannerViewHolder)holder;
             bannerViewHolder.setDate(resultBean.getBanner_info());
+        }else if(getItemViewType(position)==CHANNEL){
+            ChannelViewHolder channelViewHolder = (ChannelViewHolder) holder;
+            channelViewHolder.setData(resultBean.getChannel_info());
         }
     }
 
@@ -142,6 +149,33 @@ public class HomeFragmentAdapter  extends RecyclerView.Adapter {
     //总共有多少个item
     @Override
     public int getItemCount() {
-        return 1;
+        return 2;
+    }
+}
+class ChannelViewHolder extends RecyclerView.ViewHolder{
+
+    private Context mContext;
+    private GridView gv_channel;
+    private ChannelAdapter adapter;
+
+    public ChannelViewHolder(final Context mContext, View itemView) {
+        super(itemView);
+        this.mContext = mContext;
+        gv_channel = itemView.findViewById(R.id.gv_channel);
+
+        //设置item的点击事件
+        gv_channel.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Toast.makeText(mContext,"position"+position,Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    public void setData(List<ResultBeanDate.ResultBean.ChannelInfoBean> channel_info) {
+        //得到数据
+        //设置Gridview的适配器
+        adapter = new ChannelAdapter(mContext,channel_info);
+        gv_channel.setAdapter(adapter);
     }
 }
