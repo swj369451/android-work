@@ -1,10 +1,10 @@
 package com.qq149.android_work_sm_130.home.adapter;
 
 import android.content.Context;
-import android.media.SoundPool;
 import android.support.annotation.NonNull;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -66,6 +67,8 @@ public class HomeFragmentAdapter  extends RecyclerView.Adapter {
             return new ChannelViewHolder(mContext,mLayoutInflater.inflate(R.layout.channel_item,null));
         }else if(viewType==ACT){
             return new ActViewHolder(mContext,mLayoutInflater.inflate(R.layout.act_item,null));
+        }else if(viewType==SECKILL){
+            return new SeckillViewHolder(mContext,mLayoutInflater.inflate(R.layout.seckill_item,null));
         }
         return null;
     }
@@ -122,12 +125,14 @@ public class HomeFragmentAdapter  extends RecyclerView.Adapter {
             BannerViewHolder bannerViewHolder = (BannerViewHolder)holder;
             bannerViewHolder.setDate(resultBean.getBanner_info());
         }else if(getItemViewType(position)==CHANNEL){
-            ChannelViewHolder channelViewHolder = (ChannelViewHolder) holder;
+            ChannelViewHolder channelViewHolder = (ChannelViewHolder)holder;
             channelViewHolder.setData(resultBean.getChannel_info());
-        }
-        else if(getItemViewType(position)==ACT){
-            ActViewHolder actViewHolder = (ActViewHolder) holder;
+        }else if(getItemViewType(position)==ACT){
+            ActViewHolder actViewHolder = (ActViewHolder)holder;
             actViewHolder.setData(resultBean.getAct_info());
+        }else if(getItemViewType(position)==SECKILL){
+            SeckillViewHolder seckillViewHolder = (SeckillViewHolder)holder;
+            seckillViewHolder.setData(resultBean.getSeckill_info());
         }
     }
 
@@ -150,6 +155,9 @@ public class HomeFragmentAdapter  extends RecyclerView.Adapter {
             case HOT:
                 currentType =HOT;
                 break;
+            case SECKILL:
+                currentType =SECKILL;
+                break;
 
         }
         return currentType;
@@ -158,7 +166,7 @@ public class HomeFragmentAdapter  extends RecyclerView.Adapter {
     //总共有多少个item
     @Override
     public int getItemCount() {
-        return 3;
+        return 4;
     }
 }
 class ChannelViewHolder extends RecyclerView.ViewHolder{
@@ -254,3 +262,31 @@ class ActViewHolder extends RecyclerView.ViewHolder{
         });
     }
 }
+class SeckillViewHolder extends RecyclerView.ViewHolder{
+
+    private final Context mContext;
+    private TextView tv_time_seckill;
+    private TextView tv_more_seckill;
+    private RecyclerView rv_seckill;
+    private SeckillRecyclerAdapter adapter;
+
+
+    public SeckillViewHolder(Context mContext, View itemView) {
+        super(itemView);
+        tv_time_seckill = itemView.findViewById(R.id.tv_time_seckill);
+        tv_more_seckill = itemView.findViewById(R.id.tv_more_seckill);
+        rv_seckill = itemView.findViewById(R.id.rv_seckill);
+        this.mContext = mContext;
+    }
+
+    public void setData(ResultBeanDate.ResultBean.SeckillInfoBean seckill_info) {
+        //1.得到数据
+        //2.设置数据，文本和recycleView数据
+        adapter = new SeckillRecyclerAdapter(mContext,seckill_info.getList());
+        rv_seckill.setAdapter(adapter);
+
+        //设置布局管理器
+        rv_seckill.setLayoutManager(new LinearLayoutManager(mContext,LinearLayoutManager.HORIZONTAL,false));
+    }
+}
+
