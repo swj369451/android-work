@@ -1,6 +1,8 @@
 package com.qq149.android_work_sm_130.home.adapter;
 
 import android.content.Context;
+import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -26,8 +28,13 @@ import com.youth.banner.listener.OnBannerClickListener;
 import com.youth.banner.listener.OnLoadImageListener;
 import com.zhy.magicviewpager.transformer.RotateDownPageTransformer;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Formatter;
 import java.util.List;
+
+import java.util.logging.LogRecord;
 
 public class HomeFragmentAdapter  extends RecyclerView.Adapter {
 
@@ -49,6 +56,7 @@ public class HomeFragmentAdapter  extends RecyclerView.Adapter {
     private  ResultBeanDate.ResultBean resultBean;
     //当前类型
     private  int currentType = BANNER;
+
 
 
     public HomeFragmentAdapter(Context mContext, ResultBeanDate.ResultBean resultBean) {
@@ -262,6 +270,7 @@ class ActViewHolder extends RecyclerView.ViewHolder{
         });
     }
 }
+
 class SeckillViewHolder extends RecyclerView.ViewHolder{
 
     private final Context mContext;
@@ -270,7 +279,24 @@ class SeckillViewHolder extends RecyclerView.ViewHolder{
     private RecyclerView rv_seckill;
     private SeckillRecyclerAdapter adapter;
 
-
+    //    相差多少时间
+    private long dt = 0;
+    private Handler handler = new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            dt=dt-1000;
+            SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss");
+            String time  = format.format(new Date(dt));
+            tv_time_seckill.setText(time);
+            handler.removeMessages(0);
+            handler.sendEmptyMessageDelayed(0,1000);
+            if(dt<=0){
+                //把消息移除
+                handler.removeCallbacksAndMessages(null);
+            }
+        }
+    };
     public SeckillViewHolder(Context mContext, View itemView) {
         super(itemView);
         tv_time_seckill = itemView.findViewById(R.id.tv_time_seckill);
@@ -287,6 +313,20 @@ class SeckillViewHolder extends RecyclerView.ViewHolder{
 
         //设置布局管理器
         rv_seckill.setLayoutManager(new LinearLayoutManager(mContext,LinearLayoutManager.HORIZONTAL,false));
+//        设置item的点击事件
+        adapter.setOnSeckillRecyclerView(new SeckillRecyclerAdapter.onSeckillRecyclerView() {
+            @Override
+            public void onItem(int position) {
+                Toast.makeText(mContext, "秒杀"+position, Toast.LENGTH_SHORT).show();
+            }
+        });
+
+//        秒杀倒计时
+        dt=Integer.valueOf(seckill_info.getEnd_time()) -Integer.valueOf(seckill_info.getStart_time());
+
+
+        handler.sendEmptyMessageDelayed(0,1000);
+
     }
 }
 

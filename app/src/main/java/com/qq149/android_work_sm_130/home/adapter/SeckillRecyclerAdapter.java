@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.qq149.android_work_sm_130.R;
@@ -57,7 +58,29 @@ public class SeckillRecyclerAdapter extends RecyclerView.Adapter<SeckillRecycler
             iv_figure = itemView.findViewById(R.id.iv_figure);
             tv_cover_price = itemView.findViewById(R.id.tv_cover_price);
             tv_origin_price = itemView.findViewById(R.id.tv_origin_price);
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+//                    Toast.makeText(mContext,"秒杀"+getLayoutPosition(),Toast.LENGTH_SHORT).show();
+                    if(onSeckillRecyclerView != null){
+                        onSeckillRecyclerView.onItem(getLayoutPosition());
+                    }
+                }
+            });
         }
     }
+//    设置点击事件
+    public interface  onSeckillRecyclerView{
+        public void onItem(int position);
+    }
+    private onSeckillRecyclerView onSeckillRecyclerView;
 
+    /**
+     * 设置监听
+     * @param onSeckillRecyclerView
+     */
+    public void setOnSeckillRecyclerView (onSeckillRecyclerView onSeckillRecyclerView){
+        this.onSeckillRecyclerView=onSeckillRecyclerView;
+    }
 }
