@@ -1,6 +1,7 @@
 package com.qq149.android_work_sm_130.app;
 
 import android.app.Application;
+import android.content.Context;
 
 import com.zhy.http.okhttp.OkHttpUtils;
 
@@ -10,9 +11,16 @@ import okhttp3.OkHttpClient;
 
 public class MyApplication  extends Application {
 
+    public static Context getmContext() {
+        return mContext;
+    }
+
+    private static Context mContext;
+
     @Override
     public void onCreate() {
         super.onCreate();
+        mContext=this;
         initOKHttpClient();
 
     }

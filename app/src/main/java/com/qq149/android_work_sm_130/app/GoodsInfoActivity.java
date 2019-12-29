@@ -19,6 +19,7 @@ import com.bumptech.glide.Glide;
 import com.qq149.android_work_sm_130.R;
 import com.qq149.android_work_sm_130.home.adapter.HomeFragmentAdapter;
 import com.qq149.android_work_sm_130.home.bean.GoodsBean;
+import com.qq149.android_work_sm_130.shoppingcart.utils.CartStorage;
 import com.qq149.android_work_sm_130.utils.Constants;
 
 public class GoodsInfoActivity extends Activity implements View.OnClickListener {
@@ -99,7 +100,8 @@ public class GoodsInfoActivity extends Activity implements View.OnClickListener 
             Toast.makeText(this, "更多", Toast.LENGTH_SHORT).show();
         } else if ( v == btnGoodInfoAddcart ) {
             // Handle clicks for btnGoodInfoAddcart
-            Toast.makeText(this, "添加到购物车", Toast.LENGTH_SHORT).show();
+            CartStorage.getInstance().addData(goodsBean);
+            Toast.makeText(this, "添加到成功了", Toast.LENGTH_SHORT).show();
         } else if ( v == tvGoodInfoCallcenter ) {
             // Handle clicks for btnGoodInfoAddcart
             Toast.makeText(this, "客户中心", Toast.LENGTH_SHORT).show();

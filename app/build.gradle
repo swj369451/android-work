@@ -44,4 +44,6 @@ dependencies {
 
     implementation 'com.squareup.picasso:picasso:2.5.2'
     implementation 'com.linsea:opendanmaku:1.0.0@aar'
+
+    implementation 'com.google.code.gson:gson:2.2.4'
 }
