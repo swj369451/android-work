@@ -1,6 +1,7 @@
 package com.qq149.android_work_sm_130.home.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
@@ -19,6 +20,7 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.qq149.android_work_sm_130.R;
+import com.qq149.android_work_sm_130.app.GoodsInfoActivity;
 import com.qq149.android_work_sm_130.home.bean.ResultBeanDate;
 import com.qq149.android_work_sm_130.utils.Constants;
 import com.youth.banner.Banner;
@@ -59,6 +61,7 @@ public class HomeFragmentAdapter  extends RecyclerView.Adapter {
 
 
 
+
     public HomeFragmentAdapter(Context mContext, ResultBeanDate.ResultBean resultBean) {
         this.mContext = mContext;
         this.resultBean = resultBean;
@@ -84,7 +87,6 @@ public class HomeFragmentAdapter  extends RecyclerView.Adapter {
         }
         return null;
     }
-
 
     class BannerViewHolder extends RecyclerView.ViewHolder{
 
@@ -125,10 +127,13 @@ public class HomeFragmentAdapter  extends RecyclerView.Adapter {
                 @Override
                 public void OnBannerClick(int position) {
                     Toast.makeText(mContext,"position=="+position,Toast.LENGTH_SHORT).show();
+                    startGoodsInfoActivity();
                 }
             });
         }
     }
+
+
 
     //相当于绑定数据
     @Override
@@ -153,6 +158,8 @@ public class HomeFragmentAdapter  extends RecyclerView.Adapter {
             hotViewHolder.setData(resultBean.getHot_info());
         }
     }
+
+
 
     //得到类型
     @Override
@@ -186,217 +193,228 @@ public class HomeFragmentAdapter  extends RecyclerView.Adapter {
     public int getItemCount() {
         return 6;
     }
-}
-class ChannelViewHolder extends RecyclerView.ViewHolder{
+    class ChannelViewHolder extends RecyclerView.ViewHolder{
 
-    private Context mContext;
-    private GridView gv_channel;
-    private ChannelAdapter adapter;
+        private Context mContext;
+        private GridView gv_channel;
+        private ChannelAdapter adapter;
 
-    public ChannelViewHolder(final Context mContext, View itemView) {
-        super(itemView);
-        this.mContext = mContext;
-        gv_channel = itemView.findViewById(R.id.gv_channel);
+        public ChannelViewHolder(final Context mContext, View itemView) {
+            super(itemView);
+            this.mContext = mContext;
+            gv_channel = itemView.findViewById(R.id.gv_channel);
 
-        //设置item的点击事件
-        gv_channel.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(mContext,"position"+position,Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
-
-    public void setData(List<ResultBeanDate.ResultBean.ChannelInfoBean> channel_info) {
-        //得到数据
-        //设置Gridview的适配器
-        adapter = new ChannelAdapter(mContext,channel_info);
-        gv_channel.setAdapter(adapter);
-    }
-}
-class ActViewHolder extends RecyclerView.ViewHolder{
-    private Context mContext;
-    private ViewPager act_viewpage;
-
-
-    public ActViewHolder(Context mContext, View itemView) {
-        super(itemView);
-        this.mContext = mContext;
-        act_viewpage = itemView.findViewById(R.id.act_viewpager);
-    }
-
-    public void setData(final List<ResultBeanDate.ResultBean.ActInfoBean> act_info) {
-
-        //设置间距
-        act_viewpage.setPageMargin(40);
-        act_viewpage.setOffscreenPageLimit(3);
-
-        //设置过度动画
-        act_viewpage.setPageTransformer(true,new RotateDownPageTransformer());
-
-        //1.有数据了
-        //2.设置适配器
-        act_viewpage.setAdapter(new PagerAdapter() {
-            @Override
-            public int getCount() {
-                return act_info.size();
-            }
-
-            //view页面，o是instantiateItem方法返回的值
-            @Override
-            public boolean isViewFromObject(@NonNull View view, @NonNull Object o) {
-                return view==o;
-            }
-
-            /**
-             *
-             * @param container viewpage
-             * @param position 对应页面的位置
-             * @return
-             */
-            @NonNull
-            @Override
-            public Object instantiateItem(@NonNull ViewGroup container, final int position) {
-                ImageView imageView = new ImageView(mContext);
-                imageView.setScaleType(ImageView.ScaleType.FIT_XY);
-                //添加到容器中
-                Glide.with(mContext).load(Constants.BASE_URL_IMAGE + act_info.get(position).getIcon_url()).into(imageView);
-                container.addView(imageView);
-                
-                //设置点击事件
-                imageView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Toast.makeText(mContext, "position"+position, Toast.LENGTH_SHORT).show();
-                    }
-                });
-                return imageView;
-            }
-
-            @Override
-            public void destroyItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
-                container.removeView((View) object);
-            }
-        });
-    }
-}
-
-class SeckillViewHolder extends RecyclerView.ViewHolder{
-
-    private final Context mContext;
-    private TextView tv_time_seckill;
-    private TextView tv_more_seckill;
-    private RecyclerView rv_seckill;
-    private SeckillRecyclerAdapter adapter;
-
-    //    相差多少时间
-    private long dt = 0;
-    private Handler handler = new Handler(){
-        @Override
-        public void handleMessage(Message msg) {
-            super.handleMessage(msg);
-            dt=dt-1000;
-            SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss");
-            String time  = format.format(new Date(dt));
-            tv_time_seckill.setText(time);
-            handler.removeMessages(0);
-            handler.sendEmptyMessageDelayed(0,1000);
-            if(dt<=0){
-                //把消息移除
-                handler.removeCallbacksAndMessages(null);
-            }
+            //设置item的点击事件
+            gv_channel.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    Toast.makeText(mContext,"position"+position,Toast.LENGTH_SHORT).show();
+                }
+            });
         }
-    };
-    public SeckillViewHolder(Context mContext, View itemView) {
-        super(itemView);
-        tv_time_seckill = itemView.findViewById(R.id.tv_time_seckill);
-        tv_more_seckill = itemView.findViewById(R.id.tv_more_seckill);
-        rv_seckill = itemView.findViewById(R.id.rv_seckill);
-        this.mContext = mContext;
+
+        public void setData(List<ResultBeanDate.ResultBean.ChannelInfoBean> channel_info) {
+            //得到数据
+            //设置Gridview的适配器
+            adapter = new ChannelAdapter(mContext,channel_info);
+            gv_channel.setAdapter(adapter);
+        }
+    }
+    class ActViewHolder extends RecyclerView.ViewHolder{
+        private Context mContext;
+        private ViewPager act_viewpage;
+
+
+        public ActViewHolder(Context mContext, View itemView) {
+            super(itemView);
+            this.mContext = mContext;
+            act_viewpage = itemView.findViewById(R.id.act_viewpager);
+        }
+
+        public void setData(final List<ResultBeanDate.ResultBean.ActInfoBean> act_info) {
+
+            //设置间距
+            act_viewpage.setPageMargin(40);
+            act_viewpage.setOffscreenPageLimit(3);
+
+            //设置过度动画
+            act_viewpage.setPageTransformer(true,new RotateDownPageTransformer());
+
+            //1.有数据了
+            //2.设置适配器
+            act_viewpage.setAdapter(new PagerAdapter() {
+                @Override
+                public int getCount() {
+                    return act_info.size();
+                }
+
+                //view页面，o是instantiateItem方法返回的值
+                @Override
+                public boolean isViewFromObject(@NonNull View view, @NonNull Object o) {
+                    return view==o;
+                }
+
+                /**
+                 *
+                 * @param container viewpage
+                 * @param position 对应页面的位置
+                 * @return
+                 */
+                @NonNull
+                @Override
+                public Object instantiateItem(@NonNull ViewGroup container, final int position) {
+                    ImageView imageView = new ImageView(mContext);
+                    imageView.setScaleType(ImageView.ScaleType.FIT_XY);
+                    //添加到容器中
+                    Glide.with(mContext).load(Constants.BASE_URL_IMAGE + act_info.get(position).getIcon_url()).into(imageView);
+                    container.addView(imageView);
+
+                    //设置点击事件
+                    imageView.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Toast.makeText(mContext, "position"+position, Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                    return imageView;
+                }
+
+                @Override
+                public void destroyItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
+                    container.removeView((View) object);
+                }
+            });
+        }
     }
 
-    public void setData(ResultBeanDate.ResultBean.SeckillInfoBean seckill_info) {
-        //1.得到数据
-        //2.设置数据，文本和recycleView数据
-        adapter = new SeckillRecyclerAdapter(mContext,seckill_info.getList());
-        rv_seckill.setAdapter(adapter);
+    class SeckillViewHolder extends RecyclerView.ViewHolder{
 
-        //设置布局管理器
-        rv_seckill.setLayoutManager(new LinearLayoutManager(mContext,LinearLayoutManager.HORIZONTAL,false));
-//        设置item的点击事件
-        adapter.setOnSeckillRecyclerView(new SeckillRecyclerAdapter.onSeckillRecyclerView() {
+        private final Context mContext;
+        private TextView tv_time_seckill;
+        private TextView tv_more_seckill;
+        private RecyclerView rv_seckill;
+        private SeckillRecyclerAdapter adapter;
+
+        //    相差多少时间
+        private long dt = 0;
+        private Handler handler = new Handler(){
             @Override
-            public void onItem(int position) {
-                Toast.makeText(mContext, "秒杀"+position, Toast.LENGTH_SHORT).show();
+            public void handleMessage(Message msg) {
+                super.handleMessage(msg);
+                dt=dt-1000;
+                SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss");
+                String time  = format.format(new Date(dt));
+                tv_time_seckill.setText(time);
+                handler.removeMessages(0);
+                handler.sendEmptyMessageDelayed(0,1000);
+                if(dt<=0){
+                    //把消息移除
+                    handler.removeCallbacksAndMessages(null);
+                }
             }
-        });
+        };
+        public SeckillViewHolder(Context mContext, View itemView) {
+            super(itemView);
+            tv_time_seckill = itemView.findViewById(R.id.tv_time_seckill);
+            tv_more_seckill = itemView.findViewById(R.id.tv_more_seckill);
+            rv_seckill = itemView.findViewById(R.id.rv_seckill);
+            this.mContext = mContext;
+        }
+
+        public void setData(ResultBeanDate.ResultBean.SeckillInfoBean seckill_info) {
+            //1.得到数据
+            //2.设置数据，文本和recycleView数据
+            adapter = new SeckillRecyclerAdapter(mContext,seckill_info.getList());
+            rv_seckill.setAdapter(adapter);
+
+            //设置布局管理器
+            rv_seckill.setLayoutManager(new LinearLayoutManager(mContext,LinearLayoutManager.HORIZONTAL,false));
+//        设置item的点击事件
+            adapter.setOnSeckillRecyclerView(new SeckillRecyclerAdapter.onSeckillRecyclerView() {
+                @Override
+                public void onItem(int position) {
+                    Toast.makeText(mContext, "秒杀"+position, Toast.LENGTH_SHORT).show();
+                    startGoodsInfoActivity();
+                }
+            });
 
 //        秒杀倒计时
-        dt=Integer.valueOf(seckill_info.getEnd_time()) -Integer.valueOf(seckill_info.getStart_time());
+            dt=Integer.valueOf(seckill_info.getEnd_time()) -Integer.valueOf(seckill_info.getStart_time());
 
 
-        handler.sendEmptyMessageDelayed(0,1000);
+            handler.sendEmptyMessageDelayed(0,1000);
 
+        }
+    }
+
+    class RecommendViewHolder extends RecyclerView.ViewHolder{
+
+        private final Context mContext;
+        private TextView tv_more_recommend;
+        private GridView gv_recommend;
+        private RecommendGridViewAdapter recommendGridViewAdapter;
+
+        public RecommendViewHolder(final Context mContext, View itemView) {
+            super(itemView);
+            this.mContext = mContext;
+            tv_more_recommend = itemView.findViewById(R.id.tv_more_recommend);
+            gv_recommend = itemView.findViewById(R.id.gv_recommend);
+
+            //设置点击事件
+            gv_recommend.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    Toast.makeText(mContext, "position=="+position, Toast.LENGTH_SHORT).show();
+                    startGoodsInfoActivity();
+                }
+            });
+        }
+
+        public void setData(List<ResultBeanDate.ResultBean.RecommendInfoBean> recommend_info) {
+            //1.有数据
+            //2.设置适配器
+            recommendGridViewAdapter = new RecommendGridViewAdapter(mContext,recommend_info);
+            gv_recommend.setAdapter(recommendGridViewAdapter);
+        }
+    }
+
+    class HotViewHolder extends  RecyclerView.ViewHolder{
+
+        private final Context mContext;
+
+        private TextView tv_more_hot;
+        private GridView gv_hot;
+        private  HotGridViewAdapter adapter;
+
+        public HotViewHolder(final Context mContext, View itemView) {
+            super(itemView);
+            this.mContext = mContext;
+            tv_more_hot = itemView.findViewById(R.id.tv_more_hot);
+            gv_hot = itemView.findViewById(R.id.gv_hot);
+            //设置item的监听
+            gv_hot.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    Toast.makeText(mContext, "position=="+position, Toast.LENGTH_SHORT).show();
+                    startGoodsInfoActivity();
+                }
+            });
+        }
+
+        public void setData(List<ResultBeanDate.ResultBean.HotInfoBean> hot_info) {
+            //1.有数据
+            //2.设置GridView的适配器
+            adapter = new HotGridViewAdapter(mContext,hot_info);
+            gv_hot.setAdapter(adapter);
+        }
+    }
+
+    //启动商品的详情页面
+    private void startGoodsInfoActivity(){
+        Intent intent = new Intent(mContext,GoodsInfoActivity.class);
+        mContext.startActivity(intent);
     }
 }
 
-class RecommendViewHolder extends RecyclerView.ViewHolder{
 
-    private final Context mContext;
-    private TextView tv_more_recommend;
-    private GridView gv_recommend;
-    private RecommendGridViewAdapter recommendGridViewAdapter;
-
-    public RecommendViewHolder(final Context mContext, View itemView) {
-        super(itemView);
-        this.mContext = mContext;
-        tv_more_recommend = itemView.findViewById(R.id.tv_more_recommend);
-        gv_recommend = itemView.findViewById(R.id.gv_recommend);
-
-        //设置点击事件
-        gv_recommend.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(mContext, "position=="+position, Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
-
-    public void setData(List<ResultBeanDate.ResultBean.RecommendInfoBean> recommend_info) {
-        //1.有数据
-        //2.设置适配器
-        recommendGridViewAdapter = new RecommendGridViewAdapter(mContext,recommend_info);
-        gv_recommend.setAdapter(recommendGridViewAdapter);
-    }
-}
-
-class HotViewHolder extends  RecyclerView.ViewHolder{
-
-    private final Context mContext;
-
-    private TextView tv_more_hot;
-    private GridView gv_hot;
-    private  HotGridViewAdapter adapter;
-
-    public HotViewHolder(final Context mContext, View itemView) {
-        super(itemView);
-        this.mContext = mContext;
-        tv_more_hot = itemView.findViewById(R.id.tv_more_hot);
-        gv_hot = itemView.findViewById(R.id.gv_hot);
-        //设置item的监听
-        gv_hot.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(mContext, "position=="+position, Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
-
-    public void setData(List<ResultBeanDate.ResultBean.HotInfoBean> hot_info) {
-        //1.有数据
-        //2.设置GridView的适配器
-        adapter = new HotGridViewAdapter(mContext,hot_info);
-        gv_hot.setAdapter(adapter);
-    }
-}
 
