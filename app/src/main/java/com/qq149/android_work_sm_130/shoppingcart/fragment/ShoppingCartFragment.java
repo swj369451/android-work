@@ -1,5 +1,6 @@
 package com.qq149.android_work_sm_130.shoppingcart.fragment;
 
+import android.bluetooth.le.AdvertisingSetParameters;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -39,10 +40,15 @@ public class ShoppingCartFragment extends BaseFragment implements View.OnClickLi
     private LinearLayout ll_empty_shopcart;
     private ShoppingCartAdapter adapter;
 
+    //编辑状态
+    private static final int ACTION_EDIT = 1;
+    private static final int ACTION_COMPLETE = 2;
+
     @Override
     public void onResume() {
         super.onResume();
         initDate();
+        showData();
     }
 
     /**
@@ -75,7 +81,59 @@ public class ShoppingCartFragment extends BaseFragment implements View.OnClickLi
         btnCheckOut.setOnClickListener( this );
         btnDelete.setOnClickListener( this );
         btnCollection.setOnClickListener( this );
+
+        initListener();
+
         return view;
+    }
+
+    private void initListener() {
+        //设置默认的编辑状态
+        tvShopcartEdit.setTag(ACTION_EDIT);
+        tvShopcartEdit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int action = (int) v.getTag();
+                if (action == ACTION_EDIT) {
+                    //切换为完成状态
+                    showDelete();
+                }else {
+                    //切换成编辑状态
+                    hideDelete();
+                }
+            }
+        });
+    }
+
+    private void hideDelete() {
+        //设置状态和文本-编辑
+        tvShopcartEdit.setTag(ACTION_EDIT);
+        tvShopcartEdit.setText("编辑");
+        //变成非勾选
+        if(adapter != null){
+            adapter.checkAll_none(true);
+            adapter.checkAll();
+            adapter.showTotalPrice();
+        }
+        //删除视图显示
+        llDelete.setVisibility(View.GONE);
+        //计算视图隐藏
+        llCheckAll.setVisibility(View.VISIBLE);
+    }
+
+    private void showDelete() {
+        //设置状态和文本-完成
+        tvShopcartEdit.setTag(ACTION_COMPLETE);
+        tvShopcartEdit.setText("完成");
+        //变成非勾选
+        if(adapter != null){
+            adapter.checkAll_none(false);
+            adapter.checkAll();
+        }
+        //删除视图显示
+        llDelete.setVisibility(View.VISIBLE);
+        //计算视图隐藏
+        llCheckAll.setVisibility(View.GONE);
     }
 
     @Override
@@ -84,6 +142,14 @@ public class ShoppingCartFragment extends BaseFragment implements View.OnClickLi
             // Handle clicks for btnCheckOut
         } else if ( v == btnDelete ) {
             // Handle clicks for btnDelete
+            //删除选中的
+            adapter.deleteDate();
+            //校验状态
+            adapter.checkAll();
+            //数据大小为0
+            if(adapter.getItemCount() == 0){
+                emptyShoppingCart();
+            }
         } else if ( v == btnCollection ) {
             // Handle clicks for btnCollection
         }
@@ -104,11 +170,13 @@ public class ShoppingCartFragment extends BaseFragment implements View.OnClickLi
         List<GoodsBean> goodsBeanList = CartStorage.getInstance().getAllData();
 
         if(goodsBeanList != null && goodsBeanList.size() > 0){
+            tvShopcartEdit.setVisibility(View.VISIBLE);
+            llCheckAll.setVisibility(View.VISIBLE);
             //有数据
             //把当没有数据显示的布局-隐藏
             ll_empty_shopcart.setVisibility(View.GONE);
             //设置适配器
-            adapter = new ShoppingCartAdapter(mContext,goodsBeanList,tvShopcartTotal,checkboxAll);
+            adapter = new ShoppingCartAdapter(mContext,goodsBeanList,tvShopcartTotal,checkboxAll,cbAll);
             recyclerview.setAdapter(adapter);
 
             //设置布局管理器
@@ -116,8 +184,14 @@ public class ShoppingCartFragment extends BaseFragment implements View.OnClickLi
         }else {
             //没有数据
             //显示数据为空的布局
-            ll_empty_shopcart.setVisibility(View.VISIBLE);
+            emptyShoppingCart();
         }
 
+    }
+
+    private void emptyShoppingCart() {
+        ll_empty_shopcart.setVisibility(View.VISIBLE);
+        tvShopcartEdit.setVisibility(View.GONE);
+        llDelete.setVisibility(View.GONE);
     }
 }

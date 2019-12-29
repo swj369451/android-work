@@ -24,16 +24,21 @@ public class ShoppingCartAdapter extends RecyclerView.Adapter<ShoppingCartAdapte
     private final List<GoodsBean> goodBeanList;
     private final TextView tvShopcartTotal;
     private final CheckBox checkboxAll;
+    //完成状态下的删除
+    private final CheckBox cbAll;
 
 
-    public ShoppingCartAdapter(Context mContext, List<GoodsBean> goodsBeanList, TextView tvShopcartTotal, CheckBox checkboxAll) {
+    public ShoppingCartAdapter(Context mContext, List<GoodsBean> goodsBeanList, TextView tvShopcartTotal, CheckBox checkboxAll, CheckBox cbAll) {
         this.mContext = mContext;
         this.goodBeanList = goodsBeanList;
         this.tvShopcartTotal = tvShopcartTotal;
         this.checkboxAll = checkboxAll;
+        this.cbAll = cbAll;
         showTotalPrice();
         //设置点击事件
         setListener();
+        //校验是否全选
+        checkAll();
     }
 
     private void setListener() {
@@ -47,14 +52,80 @@ public class ShoppingCartAdapter extends RecyclerView.Adapter<ShoppingCartAdapte
                 //3.刷新状态
                 notifyItemChanged(position);
                 //4.校验是否全选
-
+                checkAll();
                 //5.重新计算价格
                 showTotalPrice();
             }
         });
+        //CheckBox的点击事件
+        checkboxAll.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //得到状态
+                boolean isCheck = checkboxAll.isChecked();
+
+                //根据状态设置全选和非全选
+                checkAll_none(isCheck);
+
+                //计算总价格
+                showTotalPrice();
+            }
+        });
+
+        cbAll.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //得到状态
+                boolean isCheck = cbAll.isChecked();
+
+                //根据状态设置全选和非全选
+                checkAll_none(isCheck);
+
+            }
+        });
     }
 
-    private void showTotalPrice() {
+    /**
+     * 设置全选和非全选
+     * @param isCheck
+     */
+    public void checkAll_none(boolean isCheck) {
+        if(goodBeanList != null && goodBeanList.size() > 0){
+            for(int i = 0; i<goodBeanList.size(); i++){
+                GoodsBean goodsBean = goodBeanList.get(i);
+                goodsBean.setSelected(isCheck);
+                notifyItemChanged(i);
+            }
+        }
+    }
+
+    public void checkAll() {
+        if(goodBeanList != null && goodBeanList.size() > 0){
+            int number = 0 ;
+            for(int i = 0; i<goodBeanList.size(); i++){
+                GoodsBean goodsBean = goodBeanList.get(i);
+                if(!goodsBean.isSelected()){
+                    //非全选
+                    checkboxAll.setChecked(false);
+                    cbAll.setChecked(false);
+                }else{
+                    //选中的
+                    number++;
+
+                }
+            }
+            if(number == goodBeanList.size()){
+                //全选
+                checkboxAll.setChecked(true);
+                cbAll.setChecked(true);
+            }
+        }else {
+            checkboxAll.setChecked(false);
+            cbAll.setChecked(false);
+        }
+    }
+
+    public void showTotalPrice() {
         tvShopcartTotal.setText("合计："+getTotalPrice());
     }
 
@@ -117,6 +188,25 @@ public class ShoppingCartAdapter extends RecyclerView.Adapter<ShoppingCartAdapte
     public int getItemCount() {
         return goodBeanList.size();
     }
+
+    public void deleteDate() {
+        if(goodBeanList != null && goodBeanList.size() > 0){
+            for(int i = 0; i<goodBeanList.size(); i++){
+                //删除选中的
+                GoodsBean goodsBean = goodBeanList.get(i);
+                if(goodsBean.isSelected()){
+                    //内存-把移除
+                    goodBeanList.remove(goodsBean);
+                    //保存到本地
+                    CartStorage.getInstance().deleteData(goodsBean);
+                    //刷新
+                    notifyItemRemoved(i);
+                    i--;
+                }
+            }
+        }
+    }
+
     class ViewHolder extends RecyclerView.ViewHolder{
 
         private CheckBox cb_gov;

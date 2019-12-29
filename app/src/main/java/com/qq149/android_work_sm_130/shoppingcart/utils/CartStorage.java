@@ -113,4 +113,12 @@ public class CartStorage {
         //2.同步到本地
         saveLocal();
     }
+
+    public void deleteData(GoodsBean goodsBean) {
+        //1.内存中删除
+        sparseArray.delete(Integer.parseInt(goodsBean.getProduct_id()));
+
+        //2.同步到本地
+        saveLocal();
+    }
 }
