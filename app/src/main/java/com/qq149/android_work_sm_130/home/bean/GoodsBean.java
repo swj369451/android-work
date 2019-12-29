@@ -14,8 +14,21 @@ public class GoodsBean implements Serializable {
 
     private int number = 1;
 
+    /**
+     * 是否被选中
+     */
+    private boolean isSelected = true;
+
     public int getNumber() {
         return number;
+    }
+
+    public boolean isSelected() {
+        return isSelected;
+    }
+
+    public void setSelected(boolean selected) {
+        isSelected = selected;
     }
 
     public void setNumber(int number) {
@@ -62,6 +75,7 @@ public class GoodsBean implements Serializable {
                 ", name='" + name + '\'' +
                 ", product_id='" + product_id + '\'' +
                 ", number=" + number +
+                ", isSelected=" + isSelected +
                 '}';
     }
 }

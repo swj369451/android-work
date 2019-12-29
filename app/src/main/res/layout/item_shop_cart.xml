@@ -58,7 +58,7 @@
                     android:textColor="#f00"
                     android:textSize="10sp" />
 
-                <com.atguigu.shoppingmall.shoppingcart.view.AddSubView
+                <com.qq149.android_work_sm_130.shoppingcart.view.AddSubView
                     android:id="@+id/ddSubView"
                     android:layout_width="120dp"
                     android:layout_height="wrap_content" />

@@ -106,4 +106,11 @@ public class CartStorage {
         return goodsBeanList;
     }
 
+    public void updateData(GoodsBean goodsBean) {
+        //1.内存中更新
+        sparseArray.put(Integer.parseInt(goodsBean.getProduct_id()),goodsBean);
+
+        //2.同步到本地
+        saveLocal();
+    }
 }
