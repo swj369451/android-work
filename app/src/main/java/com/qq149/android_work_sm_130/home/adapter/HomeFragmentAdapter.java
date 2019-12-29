@@ -77,6 +77,8 @@ public class HomeFragmentAdapter  extends RecyclerView.Adapter {
             return new ActViewHolder(mContext,mLayoutInflater.inflate(R.layout.act_item,null));
         }else if(viewType==SECKILL){
             return new SeckillViewHolder(mContext,mLayoutInflater.inflate(R.layout.seckill_item,null));
+        }else if(viewType==RECOMMEND){
+            return new RecommendViewHolder(mContext,mLayoutInflater.inflate(R.layout.recommend_item,null));
         }
         return null;
     }
@@ -141,6 +143,9 @@ public class HomeFragmentAdapter  extends RecyclerView.Adapter {
         }else if(getItemViewType(position)==SECKILL){
             SeckillViewHolder seckillViewHolder = (SeckillViewHolder)holder;
             seckillViewHolder.setData(resultBean.getSeckill_info());
+        }else if(getItemViewType(position)==RECOMMEND){
+            RecommendViewHolder recommendViewHolder = (RecommendViewHolder)holder;
+            recommendViewHolder.setData(resultBean.getRecommend_info());
         }
     }
 
@@ -174,7 +179,7 @@ public class HomeFragmentAdapter  extends RecyclerView.Adapter {
     //总共有多少个item
     @Override
     public int getItemCount() {
-        return 4;
+        return 5;
     }
 }
 class ChannelViewHolder extends RecyclerView.ViewHolder{
@@ -329,4 +334,35 @@ class SeckillViewHolder extends RecyclerView.ViewHolder{
 
     }
 }
+
+class RecommendViewHolder extends RecyclerView.ViewHolder{
+
+    private final Context mContext;
+    private TextView tv_more_recommend;
+    private GridView gv_recommend;
+    private RecommendGridViewAdapter recommendGridViewAdapter;
+
+    public RecommendViewHolder(final Context mContext, View itemView) {
+        super(itemView);
+        this.mContext = mContext;
+        tv_more_recommend = itemView.findViewById(R.id.tv_more_recommend);
+        gv_recommend = itemView.findViewById(R.id.gv_recommend);
+
+        //设置点击事件
+        gv_recommend.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Toast.makeText(mContext, "position=="+position, Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    public void setData(List<ResultBeanDate.ResultBean.RecommendInfoBean> recommend_info) {
+        //1.有数据
+        //2.设置适配器
+        recommendGridViewAdapter = new RecommendGridViewAdapter(mContext,recommend_info);
+        gv_recommend.setAdapter(recommendGridViewAdapter);
+    }
+}
+
 
