@@ -22,7 +22,7 @@ import java.util.List;
 
 
 public class ShoppingCartFragment extends BaseFragment implements View.OnClickListener {
-    private static final String TAG = com.qq149.android_work_sm_130.shoppingcart.fragment.TypeFragment.class.getSimpleName();
+    private static final String TAG = com.qq149.android_work_sm_130.shoppingcart.fragment.ShoppingCartFragment.class.getSimpleName();
     private TextView textView;
     private TextView tvShopcartEdit;
     private RecyclerView recyclerview;

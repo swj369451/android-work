@@ -14,7 +14,8 @@ import com.qq149.android_work_sm_130.base.BaseFragment;
 import com.qq149.android_work_sm_130.community.fragment.CommunityFragment;
 import com.qq149.android_work_sm_130.home.fragment.HomeFragment;
 import com.qq149.android_work_sm_130.shoppingcart.fragment.ShoppingCartFragment;
-import com.qq149.android_work_sm_130.shoppingcart.fragment.TypeFragment;
+import com.qq149.android_work_sm_130.type.fragment.ListFragment;
+import com.qq149.android_work_sm_130.type.fragment.TypeFragment;
 import com.qq149.android_work_sm_130.user.fragment.UserFragment;
 
 import java.util.ArrayList;
@@ -89,7 +90,7 @@ public class MainActivity extends FragmentActivity {
     private  void  initFragment(){
         fragments = new ArrayList<>();
         fragments.add(new HomeFragment());
-        fragments.add(new TypeFragment());
+        fragments.add(new ListFragment());
         fragments.add(new CommunityFragment());
         fragments.add(new ShoppingCartFragment());
         fragments.add(new UserFragment());

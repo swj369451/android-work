@@ -3,6 +3,17 @@ package com.qq149.android_work_sm_130.home.bean;
 import java.io.Serializable;
 
 public class GoodsBean implements Serializable {
+
+    public GoodsBean() {
+    }
+
+    public GoodsBean(String conver_price, String figure, String name, String product_id) {
+        this.conver_price = conver_price;
+        this.figure = figure;
+        this.name = name;
+        this.product_id = product_id;
+    }
+
     //价格
     private String conver_price;
     //图片
